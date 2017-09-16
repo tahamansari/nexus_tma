@@ -1,4 +1,4 @@
-var element = document.getElementById("map");
+var element = document.getElementById("map_container1");
 
 var mapTypeIds = [];
 for(var type in google.maps.MapTypeId) {
