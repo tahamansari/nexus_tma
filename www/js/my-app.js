@@ -17,15 +17,16 @@ var $$ = Dom7;
 
 $$(document).on('pageInit', function(e) {
 
-
-    // Lockr.flush();
+    alert('page init called');
 
     var page = e.detail.page;
     $('.single-item').slick();
+
     $('.menu_sub').click(function() {
         $('.menu_i,.menu_p').removeClass('menu_active');
         $(this).find('.menu_i,.menu_p').addClass('menu_active');
     });
+    
     if (page.name === 'about') {
         myApp.alert('Here comes About page');
     }
@@ -36,6 +37,11 @@ var mainView = myApp.addView('.view-main', {
 });
 
 $$(document).on('deviceready', function() {
+
+    Lockr.flush();
+
+    alert('device is ready');
+
     if (Lockr.get('login_status') == 'status') {
         goto_page('sync.html');
     }
@@ -47,6 +53,10 @@ $$(document).on('deviceready', function() {
 });
 
 myApp.onPageInit('index', function(page) {
+
+
+    alert('index page called');
+
 
     $('.box_height').animate({
         "height": "100%"
@@ -79,6 +89,10 @@ myApp.onPageInit('index', function(page) {
 });
 
 myApp.onPageInit('sync', function (page) {
+
+
+    alert('sync page called');
+
     $('.sync_text').animate({"opacity":"1" , "left":"21%"}, 1000);
     $('.red2').delay(100).animate({"opacity":"1" , "right":"0"}, 700);
     $('.sync_box').delay(500).animate({"opacity":"1" , "right":"19%"}, 800);
@@ -382,6 +396,7 @@ myApp.onPageInit('mall_facts', function (page) {
 
         // Transformation Section
         if (data_disp_id == '#transformation_page_dynamic') {
+
             $(".twentytwenty-container[data-orientation!='vertical']").twentytwenty({default_offset_pct: 0.7});
             $(".twentytwenty-container[data-orientation='vertical']").twentytwenty({default_offset_pct: 0.3, orientation: 'vertical'});
             $(".twentytwenty-container").css('height', '490px');
@@ -395,16 +410,37 @@ myApp.onPageInit('mall_facts', function (page) {
             $(".location_containers_hide").hide();
             $(".location_containers_"+mall_id).show();
 
+            var locations = [
+              ['Bondi Beach', -33.890542, 151.274856, 4],
+              ['Coogee Beach', -33.923036, 151.259052, 5],
+              ['Cronulla Beach', -34.028249, 151.157507, 3],
+              ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+              ['Maroubra Beach', -33.950198, 151.259302, 1]
+            ];
 
-            map = new google.maps.Map(document.getElementById('map_container1'), {
-              center: {lat: -34.397, lng: 150.644},
-              zoom: 8
+            var map = new google.maps.Map(document.getElementById('map_container1'), {
+              zoom: 10,
+              center: new google.maps.LatLng(-33.92, 151.25),
+              mapTypeId: google.maps.MapTypeId.ROADMAP
             });
 
-            alert('locatoin called');
+            var infowindow = new google.maps.InfoWindow();
 
+            var marker, i;
 
-           
+            for (i = 0; i < locations.length; i++) {  
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                map: map
+              });
+
+              google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                return function() {
+                  infowindow.setContent(locations[i][0]);
+                  infowindow.open(map, marker);
+                }
+              })(marker, i));
+            }
 
         }
     })
